@@ -2,7 +2,7 @@ package edu.wilmu.my_transcript.d_repository;
 
 import edu.wilmu.my_transcript.a_entity.Transcript;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -16,12 +16,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Sql(scripts = "/test-data.sql")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@DisplayName("Testing 'TranscriptRepository' class")
 public class TranscriptRepositoryTest {
 
     @Autowired
     private TranscriptRepository transcriptRepository;
 
-    // Testing findByCourseId
+    // Testing 'findByCourseId' method
+    @Order(1)
+    @DisplayName("Testing findCourseById method")
     @Test
     void testFindByCourseId() {
         Optional<Transcript> transcript = transcriptRepository.findByCourseId(6030);
@@ -29,8 +33,10 @@ public class TranscriptRepositoryTest {
         assertThat(transcript.get().getCourseName()).isEqualTo("OS and Computer System Sec");
     }
 
-    // Testing 'save' method
+    // Testing 'saveTranscript' method
 
+    @Order(2)
+    @DisplayName("Testing 'saveTranscript' method")
     @Test
     void testSaveTranscript() {
         Transcript newTranscript = new Transcript(6040, "Advanced Networking", "A", 3, "Fall 2023");
