@@ -25,7 +25,7 @@ public class TranscriptRepositoryTest {
 
     // Testing 'findByCourseId' method
     @Order(1)
-    @DisplayName("Testing findCourseById method")
+    @DisplayName("Testing 'findCourseById' method")
     @Test
     void testFindByCourseId() {
         Optional<Transcript> transcript = transcriptRepository.findByCourseId(6030);
