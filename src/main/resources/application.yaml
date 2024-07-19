@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: my-transcript
+
+    # PostgresSQL Database Connection
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/prod
+    username: pratyay
+    password: Pratyay*#02docker
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+      show-sql: true
+
+      # For reducing long error-message in Postman
+
+server:
+  error:
+    include-message: always
+    include-binding-errors: always
+    include-stacktrace: on_param
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+
+

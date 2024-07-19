@@ -1,0 +1,232 @@
+=> Step 1:
+
+# Create a package 'b_controller' and inside that package create a class 'TranscriptControllerTest'
+
+=> Step 2:
+
+# Imports necessary classes and methods for testing using JUnit, Mockito, and Spring's MockMvc framework.
+
+import edu.wilmu.my_transcript.a_entity.Transcript;
+import edu.wilmu.my_transcript.c_service.TranscriptService;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import java.util.List;
+
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+=> Step 3: Class Declaration
+
+    public class TranscriptControllerTest {
+
+=> Step 4: Fields Declaration
+
+    private MockMvc mockMvc;
+
+    @Mock
+    private TranscriptService transcriptService;
+
+    @InjectMocks
+    private TranscriptController transcriptController;
+
+-> Explanation:
+
+    -> mockMvc: MockMvc is a Spring class used for testing Spring MVC controllers. It allows you to simulate HTTP requests against your controller and verify the responses.
+    -> transcriptService: This is a mocked instance of TranscriptService injected into transcriptController.
+    -> transcriptController: This is the controller under test, injected with mocked dependencies.
+
+=> Step 5: Setup Method
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+        mockMvc = MockMvcBuilders.standaloneSetup(transcriptController).build();
+    }
+
+-> Explanation:
+
+    -> Setup Method (@BeforeEach):
+    -> MockitoAnnotations.openMocks(this);: Initializes mocks annotated with @Mock and injects them into the @InjectMocks annotated fields.
+    -> MockMvcBuilders.standaloneSetup(transcriptController).build();: Sets up MockMvc for standalone setup of the transcriptController, preparing it for testing.
+
+=> Step 6: Testing Methods
+
+    # Testing getFullTranscriptController() method
+
+    @Test
+    void getFullTranscriptController() throws Exception {
+        when(transcriptService.getFullTranscriptService()).thenReturn(List.of(new Transcript()));
+
+        mockMvc.perform(get("/api/v2/my_transcript"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray());
+
+        verify(transcriptService, times(1)).getFullTranscriptService();
+
+    }
+
+-> Explanation:
+
+    -> Description: Tests the getFullTranscriptController method of TranscriptController.
+
+    -> Mock Behavior:
+        -> when(transcriptService.getFullTranscriptService()).thenReturn(List.of(new Transcript()));: Mocks the behavior of getFullTranscriptService() to return a list containing a new Transcript instance.
+
+    -> MockMvc Execution:
+        -> mockMvc.perform(get("/api/v2/my_transcript")): Simulates a GET request to /api/v2/my_transcript.
+        -> .andExpect(status().isOk()): Verifies that the HTTP status code of the response is 200 (OK).
+        -> .andExpect(jsonPath("$").isArray()): Checks that the response content is an array.
+
+    -> Verification:
+        -> verify(transcriptService, times(1)).getFullTranscriptService();: Verifies that getFullTranscriptService() was called exactly once on transcriptService.
+
+
+    # Testing transcriptHomepage() method
+
+           @Test
+           void transcriptHomepage() throws Exception {
+               mockMvc.perform(get("/api/v2/my_transcript/home"))
+                       .andExpect(status().isOk())
+                       .andExpect(content().string("This is not an official transcript."));
+
+           }
+
+-> Explanation:
+
+    -> Description: Tests the transcriptHomepage method of TranscriptController.
+
+    -> MockMvc Execution:
+
+        -> mockMvc.perform(get("/api/v2/my_transcript/home")): Simulates a GET request to /api/v2/my_transcript/home.
+        -> .andExpect(status().isOk()): Verifies that the HTTP status code of the response is 200 (OK).
+        -> .andExpect(content().string("This is not an official transcript.")): Checks that the response content matches the expected string.
+
+
+    # Testing specificCourseResultController() method
+
+           @Test
+           void specificCourseResultController() throws Exception {
+               Transcript transcript = new Transcript(6030, "OS and Computer System Sec", "TR", 3, "Spring 2023");
+               when(transcriptService.specificCourseResultService(6030)).thenReturn(transcript);
+
+               mockMvc.perform(get("/api/v2/my_transcript/6030"))
+                       .andExpect(status().isOk())
+                       .andExpect(jsonPath("$.courseId").value(6030));
+
+               verify(transcriptService, times(1)).specificCourseResultService(6030);
+
+           }
+
+-> Explanation:
+
+    -> Description: Tests the specificCourseResultController method of TranscriptController.
+
+    -> Mock Behavior:
+        -> when(transcriptService.specificCourseResultService(6030)).thenReturn(transcript);: Mocks the behavior of specificCourseResultService() to return a specific Transcript object when called with courseId 6030.
+
+    -> MockMvc Execution:
+        -> mockMvc.perform(get("/api/v2/my_transcript/6030")): Simulates a GET request to /api/v2/my_transcript/6030.
+        -> .andExpect(status().isOk()): Verifies that the HTTP status code of the response is 200 (OK).
+        -> .andExpect(jsonPath("$.courseId").value(6030)): Checks that the returned JSON has a courseId field with value 6030.
+
+    -> Verification:
+        -> verify(transcriptService, times(1)).specificCourseResultService(6030);: Verifies that specificCourseResultService() was called exactly once with courseId 6030.
+
+
+    # Testing updateNewCourseController() method
+
+           @Test
+           void updateNewCourseController() throws Exception {
+               Transcript transcript = new Transcript(6030, "OS and Computer System Sec", "TR", 3, "Spring 2023");
+
+               mockMvc.perform(post("/api/v2/my_transcript")
+                               .contentType(MediaType.APPLICATION_JSON)
+                               .content("{\"courseId\":6030,\"courseName\":\"OS and Computer System Sec\",\"grade\":\"TR\",\"credit\":3,\"term\":\"Spring 2023\"}"))
+                       .andExpect(status().isOk());
+
+               verify(transcriptService, times(1)).updateNewCourseService(any(Transcript.class));
+           }
+
+-> Explanation:
+
+    -> Description: Tests the updateNewCourseController method of TranscriptController.
+
+    -> MockMvc Execution:
+
+        -> mockMvc.perform(post("/api/v2/my_transcript"): Simulates a POST request to /api/v2/my_transcript.
+        -> .contentType(MediaType.APPLICATION_JSON): Sets the content type of the request to JSON.
+        -> .content("{\"courseId\":6030,\"courseName\":\"OS and Computer System Sec\",\"grade\":\"A\",\"credit\":3,\"term\":\"Spring\"}"): Sets the JSON content of the request.
+        -> .andExpect(status().isOk()): Verifies that the HTTP status code of the response is 200 (OK).
+
+    -> Verification:
+
+        -> verify(transcriptService, times(1)).updateNewCourseService(any(Transcript.class));: Verifies that updateNewCourseService() was called exactly once with any Transcript object.
+
+
+    # Testing updateCourseInformationController() method
+
+          @Test
+          void updateCourseInformationController() throws Exception {
+              mockMvc.perform(put("/api/v2/my_transcript/6030")
+                              .param("courseName", "Advanced OS"))
+                      .andExpect(status().isOk());
+
+              verify(transcriptService, times(1)).updateCourseInformationService(6030, "Advanced OS", null, null, null);
+          }
+
+-> Explanation:
+
+    -> Description: Tests the updateCourseInformationController method of TranscriptController.
+
+   -> MockMvc Execution:
+
+        -> mockMvc.perform(put("/api/v2/my_transcript/6030"): Simulates a PUT request to /api/v2/my_transcript/6030.
+        -> .param("courseName", "Advanced OS"): Sets a request parameter courseName with value "Advanced OS".
+        -> .andExpect(status().isOk()): Verifies that the HTTP status code of the response is 200 (OK).
+
+   -> Verification:
+
+        -> verify(transcriptService, times(1)).updateCourseInformationService(6030, "Advanced OS", null, null, null);: Verifies that updateCourseInformationService() was called exactly once with courseId 6030 and updated course name "Advanced OS".
+
+
+   # Testing deleteCourseController() method
+
+         @Test
+         void deleteCourseController() throws Exception {
+             mockMvc.perform(delete("/api/v2/my_transcript/6030"))
+                     .andExpect(status().isOk());
+
+             verify(transcriptService, times(1)).deleteCourseService(6030);
+         }
+
+-> Explanation:
+
+    -> Description: Tests the deleteCourseController method of TranscriptController.
+
+    -> MockMvc Execution:
+
+        -> mockMvc.perform(delete("/api/v2/my_transcript/6030")): Simulates a DELETE request to /api/v2/my_transcript/6030.
+        -> .andExpect(status().isOk()): Verifies that the HTTP status code of the response is 200 (OK).
+
+    -> Verification:
+
+        -> verify(transcriptService, times(1)).deleteCourseService(6030);: Verifies that deleteCourseService() was called exactly once with courseId 6030.
+
+
+=> Summary
+
+    -> This test class (TranscriptControllerTest) demonstrates how to write unit tests for a Spring MVC controller (TranscriptController).
+    -> It uses Mockito to mock the TranscriptService and Spring's MockMvc framework to simulate HTTP requests and verify the responses.
+    -> Each test method focuses on testing a specific controller method, setting expectations on HTTP status codes, response content,
+       and interactions with the mocked TranscriptService.

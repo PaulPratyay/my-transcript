@@ -1,0 +1,37 @@
+=> JUnit:
+
+    # Purpose: JUnit is a testing framework used primarily for unit testing in Java.
+               It provides annotations and assertions to help you define and run tests.
+
+    # Functionality: It allows you to create and run repeatable tests, set up initial conditions, clean up after tests, and check expected
+                     outcomes against actual results using assertions.
+
+    # Annotations: Common annotations include @Test, @BeforeEach, @AfterEach, @BeforeAll, and @AfterAll.
+
+    # Assertions: Methods like assertEquals, assertTrue, assertFalse, etc., are used to verify the expected results.
+
+=> Mockito:
+
+    # Purpose: Mockito is a mocking framework used for creating mock objects in automated unit tests for the purpose of
+               TDD (Test-Driven Development) or BDD (Behavior-Driven Development).
+
+    # Functionality: It allows you to mock dependencies and define their behavior, verify interactions with these dependencies,
+                     and avoid complex setup that involves actual instances.
+
+    # Mocking: Using @Mock to create mock instances and @InjectMocks to inject these mocks into the objects you want to test.
+
+    # Verifying: Methods like verify, when, and thenReturn are used to set up expected behaviors and verify interactions.
+
+=> Why Use Both JUnit and Mockito?
+
+-> Benefits of Using Both Together:
+
+   # JUnit for Structure and Assertions:
+
+    -> Provides the structure for writing test cases and the ability to make assertions on expected outcomes.
+    -> Manages the lifecycle of test methods and helps organize the testing process.
+
+   # Mockito for Mocking Dependencies:
+
+    -> Allows you to isolate the unit of work by mocking dependencies, making tests faster and more reliable.
+    -> Helps to test the logic in isolation by providing controlled behavior for dependencies without relying on their actual implementations.

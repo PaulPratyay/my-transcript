@@ -1,0 +1,135 @@
+=> Step 1:
+
+    # Create a package 'd_repository' and inside that package create a class 'TranscriptRepositoryTest'
+
+=> Step 2: Import necessary libraries
+
+    # Entity Import: This imports the Transcript entity that I will be testing.
+
+    import edu.wilmu.my_transcript.a_entity.Transcript;
+
+   # JUnit Imports: This imports the @Test annotation to define test methods.
+
+   import org.junit.jupiter.api.Test;
+
+   # Spring Data JPA Testing Imports: These imports bring in annotations and classes needed for testing JPA repositories and
+                                      configuring the test database.
+
+   import org.springframework.beans.factory.annotation.Autowired;
+   import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+   import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+   import org.springframework.test.context.jdbc.Sql;
+
+   # Class-Level Annotations
+
+   -> @DataJpaTest: Configures JPA repositories for tests and sets up an in-memory database by default.
+   -> @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE): Prevents replacing the test database with
+                                                                                    an in-memory database, allowing you to use
+                                                                                    the actual configured database.
+   -> @Sql(scripts = "/test-data.sql"): Executes the specified SQL script before running the tests, allowing you to
+                                        preload test data.
+
+
+   # Inject Repository
+
+   -> @AutoWired: Injects an instance of TranscriptRepository to interact with the database during tests.
+
+
+=> Step 3: Class Declaration
+
+    public class TranscriptRepositoryTest {
+
+
+=> Step 4: Testing methods
+
+    # Testing 'findByCourseId' method
+
+     @Test
+     void testFindByCourseId() {
+        Optional<Transcript> transcript = transcriptRepository.findByCourseId(6030);
+        assertThat(transcript).isPresent();
+        assertThat(transcript.get().getCourseName()).isEqualTo("OS and Computer System Sec");
+    }
+
+-> Explanation:
+
+    -> Setup: The test data script should insert a Transcript with courseId 6030.
+    -> Action: Calls the findByCourseId method.
+    -> Assertions: Checks that the Transcript is present and has the expected course name.
+
+
+    # Testing 'save' method
+
+        @Test
+        void testSaveTranscript() {
+            Transcript newTranscript = new Transcript(6040, "Advanced Networking", "A", 3, "Fall 2023");
+            Transcript savedTranscript = transcriptRepository.save(newTranscript);
+            Optional<Transcript> foundTranscript = transcriptRepository.findById(savedTranscript.getCourseId());
+            assertThat(foundTranscript).isPresent();
+            assertThat(foundTranscript.get().getCourseName()).isEqualTo("Advanced Networking");
+
+        }
+
+-> Explanation:
+
+    -> Setup: Creates a new Transcript instance.
+    -> Action: Saves the new Transcript to the repository and retrieves it by ID.
+    -> Assertions: Checks that the Transcript is present and has the expected course name.
+
+=> Important Notes:
+
+-> For the 'TranscriptRepositoryTest', we need the following dependencies:
+
+    1) Spring Boot Test
+    2) H2 Database
+
+-> You have to create a folder under 'src/test/resources'
+
+-> Inside the 'resources' folder, create two files: 1) application.yaml and 2) test-data.sql
+
+-> In the 'application.yaml' file, you need to write the following code to ensure H2 is set up correctly for testing:
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+
+
+-> In 'test-data.sql' file, you need to write the following script:
+
+INSERT INTO transcript (course_id, course_name, grade, credit, term)
+VALUES (6030, 'OS and Computer System Sec', 'A', 3, 'Spring');
+
+
+    => Explanation of the 'application.yaml' code:
+
+->  url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1 : This specifies that you're using an H2 in-memory database for testing.
+
+-> jdbc:h2:mem:testdb : indicates that the database will be created in memory and is named testdb.
+
+-> DB_CLOSE_DELAY=-1 : keeps the database open as long as the JVM is running. This prevents the database from being closed
+                       when the last connection is closed, which is useful for testing scenarios.
+
+-> driver-class-name: org.h2.Driver : Specifies the JDBC driver class for the H2 database.
+                                      This tells Spring Boot which driver to use to connect to the H2 database.
+
+-> username: sa and password: password : These are the credentials for accessing the H2 database.
+                                         The default username for H2 is sa, and you can set any password you like.
+                                         For testing, these values are usually straightforward.
+
+-> database-platform: org.hibernate.dialect.H2Dialect: This configures Hibernate (the JPA provider) to use the dialect for
+                                                        H2 databases. The dialect is a set of rules Hibernate uses to
+                                                        generate SQL optimized for H2.
+
+-> hibernate:
+   ddl-auto: create-drop
+
+    -> This setting controls the schema management strategy for Hibernate.
+    -> create-drop means that Hibernate will create the database schema when the application starts and drop it when the
+       application stops. This is useful for testing because it ensures that each test starts with a clean database schema.

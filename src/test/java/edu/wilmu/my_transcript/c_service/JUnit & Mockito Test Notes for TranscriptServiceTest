@@ -1,0 +1,161 @@
+=> Writing test for 'TranscriptService' class
+
+    => Step 1:
+
+    # Create a package 'c_service' and inside that package create a class 'TranscriptServiceTest'
+
+    => Step 2:
+
+    # import edu.wilmu.my_transcript.a_entity.Transcript; --> Imports the 'Transcript' entity.
+    # import edu.wilmu.my_transcript.d_repository.TranscriptRepository; --> Imports the repository interface.
+
+    # JUnit and Mockito imports:
+
+    import org.junit.jupiter.api.BeforeEach;
+    import org.junit.jupiter.api.Test;
+    import org.mockito.InjectMocks;
+    import org.mockito.Mock;
+    import org.mockito.MockitoAnnotations;
+
+    import java.util.List;
+    import java.util.Optional;
+
+    import static org.junit.jupiter.api.Assertions.*;
+    import static org.mockito.Mockito.*;
+
+
+=> Notes:
+
+    -> BeforeEach, Test, Assertions are from JUnit 5 for writing tests and asserting conditions.
+    -> InjectMocks, Mock, MockitoAnnotations, and Mockito static methods are from Mockito for creating mock objects and performing verifications.
+
+    => Step 3: Class Declaration
+
+    public class TranscriptServiceTest {
+
+
+    => Step 4: Fields
+
+    @Mock
+    private TranscriptRepository transcriptRepository;
+
+    @InjectMocks
+    private TranscriptService transcriptService;
+
+=> Explanation:
+
+    -> Mock Annotation: @Mock creates a mock instance of TranscriptRepository, which is used to simulate the behavior of the real TranscriptRepository without invoking the actual database.
+    -> InjectMocks Annotation: @InjectMocks creates an instance of TranscriptService and injects the mock TranscriptRepository into it. This allows testing the TranscriptService with controlled, mock dependencies.
+
+    => Step 5: Setup Method
+
+    @BeforeEach
+    void setUp() {
+    MockitoAnnotations.openMocks(this);
+    }
+
+=> Explanation:
+
+    -> BeforeEach Annotation: @BeforeEach ensures that the setUp method is called before each test method. This is used to initialize mocks and inject dependencies.
+    -> MockitoAnnotations.openMocks: Initializes the mocks and injects them into the transcriptService object. This replaces the deprecated MockitoAnnotations.initMocks(this).
+
+    => Step 6: Test Methods
+
+    # Testing getFullTranscriptService() method
+
+       @Test
+       void getFullTranscriptService() {
+           transcriptService.getFullTranscriptService();
+           verify(transcriptRepository, times(1)).findAll();
+       }
+
+=> Explanations:
+
+    -> Test Annotation: @Test indicates that the method is a test method.
+    -> Method Call: transcriptService.getFullTranscriptService() calls the method to be tested.
+    -> Verify: verify(transcriptRepository, times(1)).findAll() checks that the findAll method of the transcriptRepository was called exactly once. This ensures that getFullTranscriptService interacts with the repository as expected.
+
+    # Testing specificCourseResultService() method
+
+        @Test
+        void specificCourseResultService() {
+            Transcript transcript = new Transcript(6030, "OS and Computer System Sec","TR",3,"Spring 2023");
+            when(transcriptRepository.findAll()).thenReturn(List.of(transcript));
+
+            Transcript result = transcriptService.specificCourseResultService(6030);
+
+            assertEquals(transcript,result);
+        }
+
+=> Explanations:
+
+    -> Mock Setup: when(transcriptRepository.findAll()).thenReturn(List.of(transcript)) sets up the mock behavior to return a list containing the transcript when findAll is called.
+    -> Method Call: Transcript result = transcriptService.specificCourseResultService(6030) calls the method to be tested and stores the result.
+    -> Assertion: assertEquals(transcript, result) checks if the result matches the expected transcript.
+
+    # Testing updateNewCourseService() method
+
+           @Test
+           void updateNewCourseService() {
+               Transcript transcript = new Transcript(6030, "OS and Computer System Sec", "TR", 3, "Spring 2023");
+               when(transcriptRepository.findByCourseId(6030)).thenReturn(Optional.empty());
+
+               transcriptService.updateNewCourseService(transcript);
+
+               verify(transcriptRepository, times(1)).save(transcript);
+           }
+
+=> Explanation:
+
+    -> Mock Setup: when(transcriptRepository.findByCourseId(6030)).thenReturn(Optional.empty()) sets up the mock to return an empty Optional when findByCourseId is called with 6030.
+    -> Method Call: transcriptService.updateNewCourseService(transcript) calls the method to be tested.
+    -> Verify: verify(transcriptRepository, times(1)).save(transcript) ensures that the save method of the transcriptRepository is called once with the transcript object.
+
+    # Testing updateCourseInformationService() method
+
+           @Test
+           void updateCourseInformationService() {
+               Transcript transcript = new Transcript(6030, "OS and Computer System Sec", "TR", 3, "Spring 2023");
+
+               when(transcriptRepository.findByCourseId(6030)).thenReturn(Optional.of(transcript));
+
+               transcriptService.updateCourseInformationService(6030, "Advanved OS", null, null, null);
+
+               assertEquals("Advanced OS", transcript.getCourseName());
+               verify(transcriptRepository, times(1)).findByCourseId(6030);
+
+           }
+
+=> Explanation:
+
+    -> Mock Setup: when(transcriptRepository.findByCourseId(6030)).thenReturn(Optional.of(transcript)) sets up the mock to return an Optional containing the transcript when findByCourseId is called with 6030.
+    -> Method Call: transcriptService.updateCourseInformationService(6030, "Advanced OS", null, null, null) calls the method to be tested.
+    -> Assertions:
+        -> assertEquals("Advanced OS", transcript.getCourseName()) checks if the course name was updated correctly.
+    -> Verify: verify(transcriptRepository, times(1)).findByCourseId(6030) ensures that the findByCourseId method was called once with 6030.
+
+    # Testing deleteCourseService() method
+
+           @Test
+           void deleteCourseService() {
+               when(transcriptRepository.existsById(6030)).thenReturn(true);
+
+               transcriptService.deleteCourseService(6030);
+
+               verify(transcriptRepository, times(1)).deleteById(6030);
+           }
+
+=> Explanation:
+
+    -> Mock Setup: when(transcriptRepository.existsById(6030)).thenReturn(true) sets up the mock to return true when existsById is called with 6030.
+    -> Method Call: transcriptService.deleteCourseService(6030) calls the method to be tested.
+    -> Verify: verify(transcriptRepository, times(1)).deleteById(6030) ensures that the deleteById method of the transcriptRepository was called once with 6030.
+
+
+=> Summary
+
+    -> Mocks: Use @Mock to create mock objects and @InjectMocks to inject them into the service being tested.
+    -> Setup: Use @BeforeEach to initialize the mocks before each test.
+    -> Tests: Write test methods using @Test, set up mock behaviors using when, call the service methods, and verify interactions using verify.
+    -> Assertions: Use assertions to check the correctness of the results.
+    -> This class ensures that the TranscriptService methods behave as expected by isolating dependencies and verifying interactions.

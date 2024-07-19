@@ -1,0 +1,58 @@
+=> Changes to be made in IntelliJ for the 'Developer Tools Application Auto Restart' dependency
+
+    1) Go to 'Settings'
+    2) Go to 'Build, Execution, Deployment'
+    3) Click on 'Compiler'
+    4) Then tick mark the 'Build project automatically' option;
+    5) Then Go to 'Advance Settings'
+    6) Under 'Compiler'
+    7) Tick mark 'Allow auto-make to start even if developed application is currently running' option;
+
+
+=> Dependency used for this Spring Application:
+
+    => DEVELOPER TOOLS
+        -> Spring Boot Dev TOOLS
+        -> Lombok
+
+    => WEB
+        -> Spring Web
+
+    => SQL
+        -> Spring Data JPA
+        -> PostgresSQL Driver
+        -> H2 Database
+
+    => I/O
+        -> Validation
+
+    => OPS
+        -> Spring Boot Actuator
+
+
+=> Hibernate Code
+
+       @Id
+       @GeneratedValue(strategy = GenerationType.IDENTITY) // I do not need this to use for my-transcript application. Because I am using specific courseId
+       @Column(name = "studentId", nullable = false)
+
+=> Annotations from jakarta.validation.constraints
+
+@Valid
+@NotNull
+@NotBlank
+
+The above three annotations can be used for 'String' Data type
+
+@Valid
+@NotNull
+@Max
+@Min
+
+The above three annotations can be used for 'Integer' Data type
+
+
+
+=> PutMapping (Changing course name in database using Postman)
+
+    -> URL to be used in Postman: localhost:8080/api/v2/my_transcript/7000?courseName=B
