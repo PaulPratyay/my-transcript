@@ -2,7 +2,7 @@
 It is a Spring Boot Application designed to manage and track acadmic transcripts. The application provides functionalities to view, update, and delete course records. It employs a RESTful API with a Spring Boot backend and uses PostgreSQL as its database management system.
 
 ## Features
-+ **View Full Transcript**: Retrieve a list of all transcript records.
++ ***View Full Transcript***: Retrieve a list of all transcript records.
 + Get Specific Course Result: Fetch details of a specific course based on its courseId.
 + Add New Course: Insert new course records into the transcript.
 + Update Course Information: Modify details of an existing course.
