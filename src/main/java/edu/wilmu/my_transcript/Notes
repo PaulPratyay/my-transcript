@@ -34,7 +34,7 @@
 
        @Id
        @GeneratedValue(strategy = GenerationType.IDENTITY) // I do not need this to use for my-transcript application. Because I am using specific courseId
-       @Column(name = "studentId", nullable = false)
+       @Column(name = "courseId", nullable = false)
 
 => Annotations from jakarta.validation.constraints
 
@@ -56,3 +56,70 @@ The above three annotations can be used for 'Integer' Data type
 => PutMapping (Changing course name in database using Postman)
 
     -> URL to be used in Postman: localhost:8080/api/v2/my_transcript/7000?courseName=B
+
+
+=> Spring 'application.yaml' code for different databases
+
+
+spring:
+  application:
+    name: zen-app-application
+
+  # postgresSQL database connection
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/dev
+    username: pratyay
+    password: Pratyay*#02docker
+
+  jpa:
+    hibernate:
+      ddl-auto: create      # Also need to use 'none' the second time I run the code
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
+    open-in-view: false
+
+
+# ---- MySQL DB connection ---------#
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/dev
+    username: root
+    password: Pratyay*#02docker
+  jpa:
+      hibernate:
+        ddl-auto: create        # Also need to use 'none' the second time I run the code
+      properties:
+
+#        hibernate:
+#          dialect: org.hibernate.dialect.MySQLDialect
+          format_sql: true
+      show-sql: true
+      open-in-view: false
+  # ---- MySQL Database ---------#
+
+################################################################
+
+spring:
+  application:
+    name: patient-registration-microservice
+
+    # MySQL Database Connection
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/dev
+    username: root
+    password: Pratyay*#02docker
+
+  jpa:
+    hibernate:
+      ddl-auto: none          # Use 'create' the first time you run the code -> for creating table in MySQL Database;
+    properties:
+
+      format_sql:
+        show-sql: true
+        open-in-view: false
